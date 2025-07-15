@@ -17,7 +17,7 @@ class Patient (Person):
     
     def __init__ (self, name, age, gender):
         super().__init__(name, age, gender)
-        self.get_patient_id= self.generate_patient_id()
+        self.get_patient_id= Patient.generate_patient_id()
 
 
     def view_profile(self):
@@ -31,10 +31,11 @@ class Doctor (Person):
 
     doctor_id_counter= 70001
 
-    def __init__(self, name, age, gender):
+    def __init__(self, name, age, gender, appointments=[]):
         super().__init__(name, age, gender)
         self.get_doctor_id= self.generate_doctor_id()
         self.doctor_calendar= self.create_calendar()
+        self.appointments= appointments
  
     def create_calendar(self):
         self.doctor_calendar= {}
@@ -57,18 +58,21 @@ class Doctor (Person):
         
         return self.doctor_calendar
 
-    def check_availability(cls):
-        cls.availabletimes= []
-        cls.check_month= input("Enter month: ")
-        cls.check_day= input("Enter day: ")
-        for cls.hrs in cls.doctor_times[cls.doctor_calendar[cls.check_month][int(cls.check_day)-1]]:
-            if cls.hrs != False:
-                cls.availabletimes.append(cls.hrs)
-        return cls.availabletimes
+    def check_availability(self):
+        self.availabletimes= []
+        self.check_month= input("Enter month: ")
+        self.check_day= input("Enter day: ")
+        for self.hrs in self.doctor_times[self.doctor_calendar[self.check_month][int(self.check_day)-1]]:
+            if self.hrs != False:
+                self.availabletimes.append(self.hrs)
+        return self.availabletimes
+    
+    def book_appointment(self, appointment):
+        self.appointments.append(appointment)
 
-    def generate_doctor_id(cls):
-        cls.doctor_id_counter += 1
-        return cls.doctor_id_counter
+    def generate_doctor_id(self):
+        self.doctor_id_counter += 1
+        return self.doctor_id_counter
     
     def view_profile(self):
         print("Name:", self.name)
@@ -78,7 +82,41 @@ class Doctor (Person):
         print("Available Times:", self.check_availability())
 
 
-doctor1= Doctor("Omaro", 22, 'M')
-doctor1.view_profile()
-doctor1.check_availability
+class Appointment:
+
+    app_status= ['booked', 'pending', 'cancelled']
+
+    def __init__ (self, appointment_id, patient, doctor, date, time, status):
+        self.appointment_id= appointment_id
+        self.patient= patient
+        self.doctor= doctor
+        self.date= date
+        self.time= time
+        self.status= status
+
+    def confirm(self):
+        self.status= self.app_status[0]
+
+    def cancel(self):
+        self.status= self.app_status[2]
+
+
+class HospitalSystem():
+
+    def __init__ (self, patients= [], doctors= [], appointments= []):
+        self.patients= patients
+        self.doctors= doctors
+        self.appointments= appointments
+
+    def add_patient(self, new_patient):
+        self.patients.append(new_patient)
+
+    def add_doctor(self, new_doctor):
+        self.doctors.append(new_doctor)
+
+    def book_appointment(self, new_appointment):
+        self.appointments.append(new_appointment)
+
+    def cancel_appointment(self, ex_appointment):
+        self.appointments.remove(ex_appointment)
 
