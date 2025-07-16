@@ -54,16 +54,15 @@ class Doctor (Person):
         return self.doctor_calendar
 
     def check_availability(self):
-        self.availabletimes= []
         self.check_month= input("Enter month: ")
         self.check_day= input("Enter day: ")
         for i in self.doctor_calendar[self.check_month][self.check_day]:
-            if i != True:
-                return i
-            break
-        
-        return self.availabletimes
-
+            if i != "BOOKED":
+                self.appointments.append(i)
+                for i in self.appointments:
+                    return i
+            else: 
+                return "Your day is fully booked"
 
     def generate_doctor_id(self):
         self.doctor_id_counter += 1
@@ -73,7 +72,7 @@ class Doctor (Person):
         print("Name:", self.name)
         print("Age:", self.age)
         print("Gender:", self.gender)
-        print("Patient ID:", self.get_doctor_id)
+        print("Doctor ID:", self.get_doctor_id)
         print("Available Times:", self.check_availability())
 
 
@@ -81,11 +80,12 @@ class Appointment:
 
     app_status= ['booked', 'pending', 'cancelled']
 
-    def __init__ (self, appointment_id, patient, doctor, date, time, status):
+    def __init__ (self, appointment_id, patient, doctor, month, day, time, status):
         self.appointment_id= appointment_id
         self.patient= patient
         self.doctor= doctor
-        self.date= date
+        self.month= month
+        self.day= day
         self.time= time
         self.status= status
 
@@ -98,28 +98,55 @@ class Appointment:
 
 class HospitalSystem():
 
-    def __init__ (self, patients= [], doctors= [], appointments= []):
-        self.patients= patients
-        self.doctors= doctors
-        self.appointments= appointments
+    def __init__ (self, patients, doctors, appointments):
+        self.patients= patients if patients else []
+        self.doctors= doctors if doctors else []
+        self.appointments= appointments if appointments else []
+        
 
-    def add_patient(self, new_patient):
-        self.patients.append(new_patient)
+    def add_patient(self, ):
+        self.name= input("Enter name: ")
+        self.age= input("Enter age: ")
+        self.gender= input("Enter gender: ")
+        self.patient= Patient(self.name, self.age, self.gender)
+        self.patients.append(self.patient)
 
     def add_doctor(self, new_doctor):
-        self.doctors.append(new_doctor)
+        self.name= input("Enter name: ")
+        self.age= input("Enter age: ")
+        self.gender= input("Enter gender: ")
+        self.appointments= []
+        self.doctor= Doctor(self.name, self.age, self.gender, self.appointments)
+        self.doctors.append(self.doctor)
 
     def book_appointment(self):
         self.book_month= input("Enter month: ")
         self.book_day= input("Enter day: ")
         self.book_time= input("Enter time: ")
         self.book_doctor= input("Enter Doctor ID: ")
-        self.book_patient=("Enter Patient ID: ")
-        self.book_appID= ("Enter Appointment ID: ")
-        self.book_appStatus= ("Confirm Appointment Status: ")
-        for i in self.doctor_calendar[self.book_month][self.book_month]:
+        self.book_patient=input("Enter Patient ID: ")
+        self.book_appID= input("Enter Appointment ID: ")
+        self.book_appStatus= input("Confirm Appointment Status: ")
+
+        self.doctor= None
+        self.patient= None
+
+        for doc in self.doctors:
+            if doc.get_doctor_id == self.book_doctor:
+                self.doctor= doc
+                break
+        
+        for pat in self.patients:
+            if pat.get_patient_id == self.book_patient:
+                self.patient = pat
+                break
+
+        for i in self.doctor.doctor_calendar()[self.book_month][self.book_month]:
             if i == self.book_time:
-                i= True
+                self.appointment= Appointment(self.book_appID, self.book_patient, self.book_doctor, self.book_month, self.book_day, self.book_time, self.book_appStatus)
+                self.doctor.appointments().append(self.appointment)
+                i= "BOOKED"
+                break
             else:
                 return "Time slot is not available"
             break
