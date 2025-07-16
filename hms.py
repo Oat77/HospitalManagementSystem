@@ -31,30 +31,25 @@ class Doctor (Person):
 
     doctor_id_counter= 70001
 
-    def __init__(self, name, age, gender, appointments=[]):
+    def __init__(self, name, age, gender, appointments):
         super().__init__(name, age, gender)
         self.get_doctor_id= self.generate_doctor_id()
         self.doctor_calendar= self.create_calendar()
-        self.appointments= appointments
+        self.appointments= appointments if appointments else []
  
     def create_calendar(self):
         self.doctor_calendar= {}
         self.months= ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October','November', 'December']
-        self.doctor_times=[]
-        self.clock= [9,10,11,12,1,2,3,4]
+        self.clock= ['9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM']
 
         for month in self.months:
-            self.doctor_calendar[month]= []
-
-        for month, days in self.doctor_calendar.items(): 
+            self.doctor_calendar[month]= {}
             if month in ('April', 'June' , 'September' , 'November') :
-                for i in range (30):
-                    days.append(False)
-                    self.doctor_times.append(self.clock)
+                for i in range (1,30):
+                    self.doctor_calendar[month][i]= list(self.clock)
             else:
-                for i in range (31):
-                    days.append(False)
-                    self.doctor_times.append(self.clock)
+                for i in range (1,31):
+                    self.doctor_calendar[month][i]= list(self.clock)
         
         return self.doctor_calendar
 
@@ -62,13 +57,13 @@ class Doctor (Person):
         self.availabletimes= []
         self.check_month= input("Enter month: ")
         self.check_day= input("Enter day: ")
-        for self.hrs in self.doctor_times[self.doctor_calendar[self.check_month][int(self.check_day)-1]]:
-            if self.hrs != False:
-                self.availabletimes.append(self.hrs)
+        for i in self.doctor_calendar[self.check_month][self.check_day]:
+            if i != True:
+                return i
+            break
+        
         return self.availabletimes
-    
-    def book_appointment(self, appointment):
-        self.appointments.append(appointment)
+
 
     def generate_doctor_id(self):
         self.doctor_id_counter += 1
@@ -114,8 +109,21 @@ class HospitalSystem():
     def add_doctor(self, new_doctor):
         self.doctors.append(new_doctor)
 
-    def book_appointment(self, new_appointment):
-        self.appointments.append(new_appointment)
+    def book_appointment(self):
+        self.book_month= input("Enter month: ")
+        self.book_day= input("Enter day: ")
+        self.book_time= input("Enter time: ")
+        self.book_doctor= input("Enter Doctor ID: ")
+        self.book_patient=("Enter Patient ID: ")
+        self.book_appID= ("Enter Appointment ID: ")
+        self.book_appStatus= ("Confirm Appointment Status: ")
+        for i in self.doctor_calendar[self.book_month][self.book_month]:
+            if i == self.book_time:
+                i= True
+            else:
+                return "Time slot is not available"
+            break
+
 
     def cancel_appointment(self, ex_appointment):
         self.appointments.remove(ex_appointment)
