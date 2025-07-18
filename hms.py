@@ -11,13 +11,14 @@ class Patient (Person):
 
     patient_id_counter= 1001
 
+    @classmethod
     def generate_patient_id(cls):
         cls.patient_id_counter += 1
         return cls.patient_id_counter
     
     def __init__ (self, name, age, gender):
         super().__init__(name, age, gender)
-        self.get_patient_id= Patient.generate_patient_id()
+        self.get_patient_id= self.generate_patient_id()
 
 
     def view_profile(self):
@@ -33,7 +34,7 @@ class Doctor (Person):
 
     def __init__(self, name, age, gender, appointments):
         super().__init__(name, age, gender)
-        self.get_doctor_id= self.generate_doctor_id()
+        self.doctor_id= self.generate_doctor_id()
         self.doctor_calendar= self.create_calendar()
         self.appointments= appointments if appointments else []
  
@@ -64,6 +65,7 @@ class Doctor (Person):
             else: 
                 return "Your day is fully booked"
 
+    @classmethod
     def generate_doctor_id(self):
         self.doctor_id_counter += 1
         return self.doctor_id_counter
@@ -72,8 +74,7 @@ class Doctor (Person):
         print("Name:", self.name)
         print("Age:", self.age)
         print("Gender:", self.gender)
-        print("Doctor ID:", self.get_doctor_id)
-        print("Available Times:", self.check_availability())
+        print("Doctor ID:", self.doctor_id)
 
 
 class Appointment:
@@ -104,14 +105,14 @@ class HospitalSystem():
         self.appointments= appointments if appointments else []
         
 
-    def add_patient(self, ):
+    def add_patient(self):
         self.name= input("Enter name: ")
         self.age= input("Enter age: ")
         self.gender= input("Enter gender: ")
         self.patient= Patient(self.name, self.age, self.gender)
         self.patients.append(self.patient)
 
-    def add_doctor(self, new_doctor):
+    def add_doctor(self):
         self.name= input("Enter name: ")
         self.age= input("Enter age: ")
         self.gender= input("Enter gender: ")
@@ -132,7 +133,7 @@ class HospitalSystem():
         self.patient= None
 
         for doc in self.doctors:
-            if doc.get_doctor_id == self.book_doctor:
+            if str(doc.doctor_id) == self.book_doctor:
                 self.doctor= doc
                 break
         
@@ -141,17 +142,101 @@ class HospitalSystem():
                 self.patient = pat
                 break
 
-        for i in self.doctor.doctor_calendar()[self.book_month][self.book_month]:
+        for i in self.doctor.doctor_calendar[self.book_month][int(self.book_day)]:
             if i == self.book_time:
                 self.appointment= Appointment(self.book_appID, self.book_patient, self.book_doctor, self.book_month, self.book_day, self.book_time, self.book_appStatus)
-                self.doctor.appointments().append(self.appointment)
+                self.doctor.appointments.append(self.appointment)
                 i= "BOOKED"
+                print (f"Appointment {self.appointment.appointment_id()} successfully booked!")
                 break
             else:
                 return "Time slot is not available"
             break
 
 
-    def cancel_appointment(self, ex_appointment):
-        self.appointments.remove(ex_appointment)
+    def cancel_appointment(self):
+
+        cancelled_appointment= input("Enter appointment ID: ")
+        
+        for i in self.appointments():
+            if i.appointment_id() == cancelled_appointment:
+                self.appointments.remove(i)
+                print (f"Appointment {cancelled_appointment} was successfully cancelled.")
+            else:
+                print (f"Appointment {cancelled_appointment} was not found.")
+            
+
+        
+
+if __name__ == "__main__":
+
+    hms= HospitalSystem([],[],[])
+
+    print ("\n ######## Welcome to the Hospital Management System! ########")
+    while True: 
+
+        print ("\n1. Doctor Management ")
+        print ("2. Register Patient")
+        print ("3. Book Appointment")
+        print ("4. Cancel Appointment")
+        print ("5. Exit")
+
+
+        menu_choice=  input("\n Please enter the number tied to your desired option: ")
+
+
+        if menu_choice== str(1):
+
+            while True: 
+                
+                print ("\n ######## You are in the Doctor Management Menu! ########")
+                print ("\n1. Register Doctor ")
+                print ("2. See Doctor Listing ")
+                print ("3. View Doctor Profile")
+                print ("4. Remove Doctor")
+                print ("5. Exit")
+
+                dm_choice=  input("\n Please enter the number tied to your desired option: ")
+
+                if dm_choice == str(1):
+                    hms.add_doctor()
+                    print ("\n Doctor successfully added!")
+
+                elif dm_choice == str(2):
+                    print ("\n ***** Doctor Listing *****")
+                    for doctor in hms.doctors:
+                        print (f"{doctor.doctor_id} : {doctor.name}")
+
+                elif dm_choice == str(3):
+                    doc_id= input("Please enter doctor ID: ")
+                    for doctor in hms.doctors:
+                        if str(doctor.doctor_id) == doc_id:
+                            doctor.view_profile()
+                        else:
+                            print("Sorry, doctor ID not found. Try again!")
+
+                elif dm_choice == str(4):
+                    doc_id= input("Please enter doctor ID: ")
+                    for doctor in hms.doctors:
+                        if doctor.doctor_id() == doc_id:
+                            hms.doctors.remove(doctor)
+                        else:
+                            print("Sorry, doctor ID not found. Try again!")
+
+                elif dm_choice == str(5):
+                    print ("\nExiting Doctor Management menu!")
+                    break
+                        
+
+    
+        
+        if menu_choice == str(3):
+            hms.book_appointment()
+
+        if menu_choice == str(4):
+            hms.cancel_appointment
+
+        if menu_choice == str(5):
+            print ("Exiting portal. Goodbye!")
+            break
 
