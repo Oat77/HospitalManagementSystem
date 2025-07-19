@@ -63,7 +63,7 @@ class Doctor (Person):
                 for i in self.appointments:
                     return i
             else: 
-                return "Your day is fully booked"
+                return "Doctor's day is fully booked"
 
     @classmethod
     def generate_doctor_id(self):
@@ -177,9 +177,8 @@ if __name__ == "__main__":
 
         print ("\n1. Doctor Management ")
         print ("2. Register Patient")
-        print ("3. Book Appointment")
-        print ("4. Cancel Appointment")
-        print ("5. Exit")
+        print ("3. Appointment Manager")
+        print ("4. Exit")
 
 
         menu_choice=  input("\n Please enter the number tied to your desired option: ")
@@ -226,17 +225,83 @@ if __name__ == "__main__":
                 elif dm_choice == str(5):
                     print ("\nExiting Doctor Management menu!")
                     break
-                        
 
-    
-        
+        if menu_choice == str(2):
+
+            while True: 
+                
+                print ("\n ######## You are in the Patient Management Menu! ########")
+                print ("\n1. Register Patient ")
+                print ("2. See Patient Listing ")
+                print ("3. View Patient Profile")
+                print ("4. Exit")
+
+                pm_choice=  input("\n Please enter the number tied to your desired option: ")
+
+                if dm_choice == str(1):
+                    hms.add_patient()
+                    print ("\n Patient successfully added!")
+
+                elif dm_choice == str(2):
+                    print ("\n ***** Patient Listing *****")
+                    for patient in hms.patients:
+                        print (f"{patient.get_patient_id} : {patient.name}")
+
+                elif dm_choice == str(3):
+                     pat_id= input("Please enter patient ID: ")
+                     for patient in hms.patients:
+                        if str(patient.get_patient_id) == pat_id:
+                            patient.view_profile()
+                        else:
+                            print("Sorry, patient ID not found. Try again!")
+
+                elif dm_choice == str(4):
+                    print ("\nExiting Patient Management menu!")
+                    break
+
+
+
+
         if menu_choice == str(3):
-            hms.book_appointment()
+
+            while True: 
+                
+                print ("\n ######## You are in the Appointment Management Menu! ########")
+                print ("\n1. Book Appointment")
+                print ("2. Cancel Appointment")
+                print ("3. Check Available Bookings")
+                print ("4. View Patient Appointments")
+                print ("5. Exit")
+
+                ap_choice=  input("\n Please enter the number tied to your desired option: ")
+
+                if ap_choice == str(1):
+                    hms.book_appointment()
+                    print ("\n Appointment successfully booked!")
+
+                if ap_choice == str(2):
+                    hms.cancel_appointment()
+                    print ("\n Appointment successfully cancelled!")
+
+                if ap_choice == str(3):
+                    doc_id= input("Please enter doctor ID: ")
+                    for i in hms.doctors:
+                        if i.doctor_id == int(doc_id):
+                            i.checkavailability()
+                        else:
+                            print ("Sorry, doctor's ID was not found!")
+
+                if ap_choice == str(4):
+                    pat_id= input("Please enter patient ID: ")
+                    for i in hms.appointments:
+                        if i.get_patient_id == pat_id:
+                            print (f"\n {i.book_appID} || Dr. {i.name} || {i.book_month} {i.book_day} @ {i.book_time} \n")
+                        else:
+                            break
+                    
+
 
         if menu_choice == str(4):
-            hms.cancel_appointment
-
-        if menu_choice == str(5):
             print ("Exiting portal. Goodbye!")
             break
 
