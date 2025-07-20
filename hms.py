@@ -1,26 +1,33 @@
+
+#Creates 'Person' class 
+
 class Person:
 
+    #Class initializer
     def __init__ (self, name, age, gender):  
+        self.name = name
+        self.age = age
+        self.gender = gender
 
-        self.name= name
-        self.age= age
-        self.gender= gender
+#Creates 'Patient' class 
 
-       
 class Patient (Person):
 
-    patient_id_counter= 1001
+    patient_id_counter = 1001
 
+    #Patient ID generator
     @classmethod
     def generate_patient_id(cls):
         cls.patient_id_counter += 1
         return cls.patient_id_counter
+
     
+    #Class initializer
     def __init__ (self, name, age, gender):
         super().__init__(name, age, gender)
-        self.get_patient_id= self.generate_patient_id()
+        self.get_patient_id = self.generate_patient_id()
 
-
+    #Profile generator that generates all patient attributes
     def view_profile(self):
         print("Name:", self.name)
         print("Age:", self.age)
@@ -28,48 +35,70 @@ class Patient (Person):
         print("Patient ID:", self.get_patient_id)
 
 
+#Creates Doctor class
 class Doctor (Person):
 
-    doctor_id_counter= 70001
+    #Counter that keeps track of assigned doctor IDs
+    doctor_id_counter = 70001
 
+    #Doctor ID generator
+    @classmethod
+    def generate_doctor_id(cls):
+        cls.doctor_id_counter += 1
+        return cls.doctor_id_counter
+
+    #Class initializer
     def __init__(self, name, age, gender, appointments):
         super().__init__(name, age, gender)
-        self.doctor_id= self.generate_doctor_id()
-        self.doctor_calendar= self.create_calendar()
-        self.appointments= appointments if appointments else []
- 
+        self.doctor_id = self.generate_doctor_id()
+        self.doctor_calendar = self.create_calendar()
+        self.appointments = appointments if appointments else []
+
+    #Creates a calender that keeps track of all booked appointments.
     def create_calendar(self):
-        self.doctor_calendar= {}
-        self.months= ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October','November', 'December']
-        self.clock= ['9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM']
 
+        #Calendar takes the form of a dictionary that has months as keys. 
+        doctor_calendar = {}
+        self.months = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December']
+        self.clock = ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM']
+
+        #The item tied to each key is a dictionary. 
+        # Each key with represents a day of the month, with each item representing the doctors working hours. 
         for month in self.months:
-            self.doctor_calendar[month]= {}
-            if month in ('April', 'June' , 'September' , 'November') :
-                for i in range (1,30):
-                    self.doctor_calendar[month][i]= list(self.clock)
-            else:
-                for i in range (1,31):
-                    self.doctor_calendar[month][i]= list(self.clock)
-        
-        return self.doctor_calendar
+            doctor_calendar[month] = {}
+            days = 30 if month in ('April', 'June', 'September', 'November') else 31
+            for i in range(1, days+1):
+                doctor_calendar[month][i] = list(self.clock)
+        return doctor_calendar
 
+    #Checks the doctor's availability by returning unbooked hour slots for a specified month and day.
     def check_availability(self):
-        self.check_month= input("Enter month: ")
-        self.check_day= input("Enter day: ")
-        for i in self.doctor_calendar[self.check_month][self.check_day]:
-            if i != "BOOKED":
-                self.appointments.append(i)
-                for i in self.appointments:
-                    return i
-            else: 
-                return "Doctor's day is fully booked"
+        check_month = input("Enter month: ").strip()
+        try:
+            check_day = int(input("Enter day: "))
 
-    @classmethod
-    def generate_doctor_id(self):
-        self.doctor_id_counter += 1
-        return self.doctor_id_counter
-    
+        #Checks for legitimate month and day entries.
+        except ValueError:
+            print("Invalid entry. Please enter a number.")
+            return
+
+        if check_month not in self.doctor_calendar:
+            print("Invalid month entered.")
+            return
+
+        if check_day not in self.doctor_calendar[check_month]:
+            print("Invalid day entered.")
+            return
+
+        #Returns doctor's available hours for a specified month and day. 
+        available_slots = [t for t in self.doctor_calendar[check_month][check_day] if t != "BOOKED"]
+        if available_slots:
+            print(f"Available slots on {check_month} {check_day}: {', '.join(available_slots)}")
+        else:
+            print("Doctor's day is fully booked.")
+
+    #Profile generator that generates all patient attributes
     def view_profile(self):
         print("Name:", self.name)
         print("Age:", self.age)
@@ -77,231 +106,259 @@ class Doctor (Person):
         print("Doctor ID:", self.doctor_id)
 
 
+#Initializes Doctor Class
 class Appointment:
 
-    app_status= ['booked', 'pending', 'cancelled']
+    #references of appointment statuses
+    app_status = ['booked', 'pending', 'cancelled']
 
+    #Class initializer
     def __init__ (self, appointment_id, patient, doctor, month, day, time, status):
-        self.appointment_id= appointment_id
-        self.patient= patient
-        self.doctor= doctor
-        self.month= month
-        self.day= day
-        self.time= time
-        self.status= status
+        self.appointment_id = appointment_id
+        self.patient = patient
+        self.doctor = doctor
+        self.month = month
+        self.day = day
+        self.time = time
+        self.status = status
+
+    #Assigns appropiate status for each appointment
+    def confirm(self):
+        self.status = self.app_status[0]
 
     def confirm(self):
-        self.status= self.app_status[0]
+        self.status= self.app_status[1]
 
     def cancel(self):
-        self.status= self.app_status[2]
+        self.status = self.app_status[2]
 
 
-class HospitalSystem():
+#Creates HospitalSystem class
+class HospitalSystem:
 
+    #Class initializer
     def __init__ (self, patients, doctors, appointments):
-        self.patients= patients if patients else []
-        self.doctors= doctors if doctors else []
-        self.appointments= appointments if appointments else []
-        
+        self.patients = patients if patients else []
+        self.doctors = doctors if doctors else []
+        self.appointments = appointments if appointments else []
 
+    #Adds patient to Hospital System
     def add_patient(self):
-        self.name= input("Enter name: ")
-        self.age= input("Enter age: ")
-        self.gender= input("Enter gender: ")
-        self.patient= Patient(self.name, self.age, self.gender)
-        self.patients.append(self.patient)
+        name = input("Enter name: ")
+        age = input("Enter age: ")
+        gender = input("Enter gender: ")
+        patient = Patient(name, age, gender)
+        self.patients.append(patient)
+        print("\n Patient successfully added!")
 
+    #Adds doctor to Hospital Systemn
     def add_doctor(self):
-        self.name= input("Enter name: ")
-        self.age= input("Enter age: ")
-        self.gender= input("Enter gender: ")
-        self.appointments= []
-        self.doctor= Doctor(self.name, self.age, self.gender, self.appointments)
-        self.doctors.append(self.doctor)
+        name = input("Enter name: ")
+        age = input("Enter age: ")
+        gender = input("Enter gender: ")
+        doctor = Doctor(name, age, gender, [])
+        self.doctors.append(doctor)
+        print("\n Doctor successfully added!")
 
+    #Adds appointment to hospital queue
     def book_appointment(self):
-        self.book_month= input("Enter month: ")
-        self.book_day= input("Enter day: ")
-        self.book_time= input("Enter time: ")
-        self.book_doctor= input("Enter Doctor ID: ")
-        self.book_patient=input("Enter Patient ID: ")
-        self.book_appID= input("Enter Appointment ID: ")
-        self.book_appStatus= input("Confirm Appointment Status: ")
+        try:
+            book_month = input("Enter month: ").strip()
+            book_day = int(input("Enter day: "))
+            book_time = input("Enter time (e.g., 9AM): ").strip()
+            book_doctor = input("Enter Doctor ID: ").strip()
+            book_patient = input("Enter Patient ID: ").strip()
+            book_appID = input("Enter Appointment ID: ").strip()
 
-        self.doctor= None
-        self.patient= None
+            #Verifies legitimate entries
+            doctor = next((d for d in self.doctors if str(d.doctor_id) == book_doctor), None)
+            if doctor is None:
+                print("Doctor not found.")
+                return
 
-        for doc in self.doctors:
-            if str(doc.doctor_id) == self.book_doctor:
-                self.doctor= doc
-                break
-        
-        for pat in self.patients:
-            if pat.get_patient_id == self.book_patient:
-                self.patient = pat
-                break
+            patient = next((p for p in self.patients if str(p.get_patient_id) == book_patient), None)
+            if patient is None:
+                print("Patient not found.")
+                return
 
-        for i in self.doctor.doctor_calendar[self.book_month][int(self.book_day)]:
-            if i == self.book_time:
-                self.appointment= Appointment(self.book_appID, self.book_patient, self.book_doctor, self.book_month, self.book_day, self.book_time, self.book_appStatus)
-                self.doctor.appointments.append(self.appointment)
-                i= "BOOKED"
-                print (f"Appointment {self.appointment.appointment_id()} successfully booked!")
-                break
-            else:
-                return "Time slot is not available"
-            break
-
-
-    def cancel_appointment(self):
-
-        cancelled_appointment= input("Enter appointment ID: ")
-        
-        for i in self.appointments():
-            if i.appointment_id() == cancelled_appointment:
-                self.appointments.remove(i)
-                print (f"Appointment {cancelled_appointment} was successfully cancelled.")
-            else:
-                print (f"Appointment {cancelled_appointment} was not found.")
+            if book_month not in doctor.doctor_calendar:
+                print("Invalid month.")
+                return
             
+            if book_day not in doctor.doctor_calendar[book_month]:
+                print("Invalid day.")
+                return
+            
+            
+            #Manages the booking of appointments and updating of doctor's calendar. 
+            slots = doctor.doctor_calendar[book_month][book_day]
+            if book_time in slots:
+                idx = slots.index(book_time)
+                slots[idx] = "BOOKED"
+                appointment = Appointment(book_appID, patient, doctor, book_month, book_day, book_time)
+                appointment.confirm()
+                self.appointments.append(appointment)
+                doctor.appointments.append(appointment)
+                print(f"Appointment {appointment.appointment_id} successfully booked!")
+            else:
+                print("Time slot is not available.")
 
-        
+        #Throws error exception for invalid appointment details. 
+        except Exception as error:
+            print("Error in processing appointment:", error)
+            print("Check submitted details and try again.")
 
+    #Manages the cancellation of appointments and the updating of doctor's calendar. 
+    def cancel_appointment(self):
+        cancelled_appointment = input("Enter appointment ID: ").strip()
+        for appt in self.appointments:
+            if appt.appointment_id == cancelled_appointment:
+                appt.cancel()
+                self.appointments.remove(appt)
+                appt.doctor.appointments.remove(appt)
+                appt.cancel
+                print(f"Appointment {cancelled_appointment} was successfully cancelled.")
+                return
+        print(f"Appointment {cancelled_appointment} was not found.")
+
+#Main program responsible for running user interface
 if __name__ == "__main__":
+    hms = HospitalSystem([], [], [])
 
-    hms= HospitalSystem([],[],[])
+    #Launches main menu
+    print("\n ######## Welcome to the Hospital Management System! ########")
+    while True:
+        print("\n1. Doctor Management")
+        print("2. Patient Management")
+        print("3. Appointment Manager")
+        print("4. Exit")
+        menu_choice = input("\n Please enter the number tied to your desired option: ")
 
-    print ("\n ######## Welcome to the Hospital Management System! ########")
-    while True: 
+        #Launches doctor management menu
+        if menu_choice == str(1):
+            while True:
+                print("\n ######## Doctor Management ########")
+                print("1. Register Doctor")
+                print("2. See Doctor Listing")
+                print("3. View Doctor Profile")
+                print("4. Remove Doctor")
+                print("5. Exit")
+                dm_choice = input("\n Your choice: ")
 
-        print ("\n1. Doctor Management ")
-        print ("2. Register Patient")
-        print ("3. Appointment Manager")
-        print ("4. Exit")
-
-
-        menu_choice=  input("\n Please enter the number tied to your desired option: ")
-
-
-        if menu_choice== str(1):
-
-            while True: 
-                
-                print ("\n ######## You are in the Doctor Management Menu! ########")
-                print ("\n1. Register Doctor ")
-                print ("2. See Doctor Listing ")
-                print ("3. View Doctor Profile")
-                print ("4. Remove Doctor")
-                print ("5. Exit")
-
-                dm_choice=  input("\n Please enter the number tied to your desired option: ")
-
+                #Adds docotor
                 if dm_choice == str(1):
                     hms.add_doctor()
-                    print ("\n Doctor successfully added!")
-
+                
+                #Produces list of registerd doctors
                 elif dm_choice == str(2):
-                    print ("\n ***** Doctor Listing *****")
-                    for doctor in hms.doctors:
-                        print (f"{doctor.doctor_id} : {doctor.name}")
-
+                    print("\n ***** Doctor Listing *****")
+                    for doc in hms.doctors:
+                        print(f"{doc.doctor_id} : {doc.name}")
+                
+                #Produces profile of a given doctor
                 elif dm_choice == str(3):
-                    doc_id= input("Please enter doctor ID: ")
-                    for doctor in hms.doctors:
-                        if str(doctor.doctor_id) == doc_id:
-                            doctor.view_profile()
-                        else:
-                            print("Sorry, doctor ID not found. Try again!")
+                    doc_id = input("Enter doctor ID: ").strip()
+                    doctor = next((d for d in hms.doctors if str(d.doctor_id) == doc_id), None)
+                    if doctor:
+                        print("\n ***** Doctor Profile *****")
+                        doctor.view_profile()
+                    else:
+                        print("Doctor ID not found.")
 
+                #De-registers doctor
                 elif dm_choice == str(4):
-                    doc_id= input("Please enter doctor ID: ")
-                    for doctor in hms.doctors:
-                        if doctor.doctor_id() == doc_id:
-                            hms.doctors.remove(doctor)
-                        else:
-                            print("Sorry, doctor ID not found. Try again!")
-
+                    doc_id = input("Enter doctor ID: ").strip()
+                    doctor = next((d for d in hms.doctors if str(d.doctor_id) == doc_id), None)
+                    if doctor:
+                        hms.doctors.remove(doctor)
+                        print("Doctor removed.")
+                    else:
+                        print("Doctor ID not found.")
+                
+                #Exits doctor management menu
                 elif dm_choice == str(5):
-                    print ("\nExiting Doctor Management menu!")
+                    print("Exiting Doctor Management.")
                     break
 
-        if menu_choice == str(2):
+        
+        #Launches Patient Management menu
+        elif menu_choice == str(2):
+            while True:
+                print("\n ######## Patient Management ########")
+                print("1. Register Patient")
+                print("2. See Patient Listing")
+                print("3. View Patient Profile")
+                print("4. Exit")
+                pm_choice = input("\n Your choice: ")
 
-            while True: 
-                
-                print ("\n ######## You are in the Patient Management Menu! ########")
-                print ("\n1. Register Patient ")
-                print ("2. See Patient Listing ")
-                print ("3. View Patient Profile")
-                print ("4. Exit")
-
-                pm_choice=  input("\n Please enter the number tied to your desired option: ")
-
-                if dm_choice == str(1):
+                #Adds patient
+                if pm_choice == str(1):
                     hms.add_patient()
-                    print ("\n Patient successfully added!")
 
-                elif dm_choice == str(2):
-                    print ("\n ***** Patient Listing *****")
-                    for patient in hms.patients:
-                        print (f"{patient.get_patient_id} : {patient.name}")
+                #Produces listing of registered patients. 
+                elif pm_choice == str(2):
+                    print("\n ***** Patient Listing *****")
+                    for p in hms.patients:
+                        print(f"{p.get_patient_id} : {p.name}")
 
-                elif dm_choice == str(3):
-                     pat_id= input("Please enter patient ID: ")
-                     for patient in hms.patients:
-                        if str(patient.get_patient_id) == pat_id:
-                            patient.view_profile()
-                        else:
-                            print("Sorry, patient ID not found. Try again!")
+                #Generates profile for a given patient.
+                elif pm_choice == str(3):
+                    pat_id = input("Enter patient ID: ").strip()
+                    patient = next((p for p in hms.patients if str(p.get_patient_id) == pat_id), None)
+                    if patient:
+                        print("\n ***** Patient Profile *****")
+                        patient.view_profile()
+                    else:
+                        print("Patient ID not found.")
 
-                elif dm_choice == str(4):
-                    print ("\nExiting Patient Management menu!")
+                #Exits Patient Management menu
+                elif pm_choice == str(4):
+                    print("Exiting Patient Management.")
                     break
 
+        #Launches Appointment Management menu
+        elif menu_choice == str(3):
+            while True:
+                print("\n ######## Appointment Manager ########")
+                print("1. Book Appointment")
+                print("2. Cancel Appointment")
+                print("3. Check Available Bookings")
+                print("4. View Patient Appointments")
+                print("5. Exit")
+                ap_choice = input("\n Your choice: ")
 
-
-
-        if menu_choice == str(3):
-
-            while True: 
-                
-                print ("\n ######## You are in the Appointment Management Menu! ########")
-                print ("\n1. Book Appointment")
-                print ("2. Cancel Appointment")
-                print ("3. Check Available Bookings")
-                print ("4. View Patient Appointments")
-                print ("5. Exit")
-
-                ap_choice=  input("\n Please enter the number tied to your desired option: ")
-
+                #Books appointment
                 if ap_choice == str(1):
                     hms.book_appointment()
-                    print ("\n Appointment successfully booked!")
 
-                if ap_choice == str(2):
+                #Cancels appointment
+                elif ap_choice == str(2):
                     hms.cancel_appointment()
-                    print ("\n Appointment successfully cancelled!")
 
-                if ap_choice == str(3):
-                    doc_id= input("Please enter doctor ID: ")
-                    for i in hms.doctors:
-                        if i.doctor_id == int(doc_id):
-                            i.checkavailability()
-                        else:
-                            print ("Sorry, doctor's ID was not found!")
+                #Displays available dates for a given doctor
+                elif ap_choice == str(3):
+                    doc_id = input("Enter doctor ID: ").strip()
+                    doctor = next((d for d in hms.doctors if str(d.doctor_id) == doc_id), None)
+                    if doctor:
+                        doctor.check_availability()
+                    else:
+                        print("Doctor ID not found.")
 
-                if ap_choice == str(4):
-                    pat_id= input("Please enter patient ID: ")
-                    for i in hms.appointments:
-                        if i.get_patient_id == pat_id:
-                            print (f"\n {i.book_appID} || Dr. {i.name} || {i.book_month} {i.book_day} @ {i.book_time} \n")
-                        else:
-                            break
-                    
+                #Generates listing of all appointments for a given patient
+                elif ap_choice == str(4):
+                    pat_id = input("Enter patient ID: ").strip()
+                    found = False
+                    for appt in hms.appointments:
+                        if str(appt.patient.get_patient_id) == pat_id:
+                            print(f"\n {appt.appointment_id} || Dr. {appt.doctor.name} || {appt.month} {appt.day} @ {appt.time}")
+                            found = True
+                    if not found:
+                        print("No appointments found for this patient.")
+                elif ap_choice == str(5):
+                    print("Exiting Appointment Manager.")
+                    break
 
-
-        if menu_choice == str(4):
-            print ("Exiting portal. Goodbye!")
+        #Closes Hospital Management System
+        elif menu_choice == str(4):
+            print("Exiting system. Goodbye!")
             break
-
