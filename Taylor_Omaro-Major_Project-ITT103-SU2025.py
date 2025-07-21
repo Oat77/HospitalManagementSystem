@@ -1,3 +1,9 @@
+""" Full Name: Omaro Taylor
+ID Number: 20251415
+Course Name: Programming Techniques (ITT103)
+Lecturer Name: Johnathon Johnson
+Semester: Summer 2025 """
+
 
 #Creates 'Person' class 
 
@@ -403,3 +409,5 @@ if __name__ == "__main__":
         elif menu_choice == str(4):
             print("Exiting system. Goodbye!")
             break
+
+"“I CERTIFY THAT I HAVE NOT GIVEN OR RECEIVED ANY UNAUTHORIZED ASSISTANCE ON THIS ASSIGNMENT”."
