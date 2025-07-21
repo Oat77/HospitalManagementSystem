@@ -1,14 +1,30 @@
-##  Author: Omaro Taylor
-##  Date Created: July 20, 2025
-##  Course: ITT103
+## Author: Omaro Taylor
+## Date Created: July 20, 2025
+## Course: ITT103
 ## Publuc URL to Code: https://github.com/Oat77/HospitalManagementSystem
 
 ### Purpose
 The purpose of the program is to address the growing challenge where hospitals struggle to maintain adequate records as well as to properly track the status of doctors' apointments
 It was created with the aim of completly virtualizing the hospial system- offering capabilities such as doctor management, patient manual as well as appointment management on both the hospital and doctor's level. 
 
+### Features
+- Register and view doctors and patients
+- Book, complete, and cancel appointments
+- View available booking slots for doctors
+- Auto-generates patient and doctor IDs
+- Generates appointment bills including additional services
+
+### Program Structure
+- Person class: Base class for shared attributes
+- Patient class: Inherits from Person and manages patient data
+- Doctor class: Inherits from Person, manages doctor's calendar and appointments
+- Appointment class: Holds appointment details and status
+- HospitalSystem class: Core logic to add, manage, and view doctors, patients, and appointments
+- Command-line interface in the main block
+
 ### How to run
-The code can be run by downlading the .py file in your repository. Once completed, this can be run in any Python IDE or launched from the terminal. 
+1. Clone the repository or download the script. 
+2. Run the script python hospital_system.py
 
 ### Assumptions
 To facilitate the smooth usage of this program, the following assumptions should be taken into account: 
