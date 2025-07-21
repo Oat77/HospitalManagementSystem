@@ -19,7 +19,7 @@ class Patient (Person):
     @classmethod
     def generate_patient_id(cls):
         cls.patient_id_counter += 1
-        return cls.patient_id_counter
+        return "P" + cls.patient_id_counter
 
     
     #Class initializer
@@ -45,7 +45,7 @@ class Doctor (Person):
     @classmethod
     def generate_doctor_id(cls):
         cls.doctor_id_counter += 1
-        return cls.doctor_id_counter
+        return "D" + cls.doctor_id_counter
 
     #Class initializer
     def __init__(self, name, age, gender, appointments):
