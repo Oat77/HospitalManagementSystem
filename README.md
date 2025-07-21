@@ -3,14 +3,14 @@ Date Created: July 20, 2025
 Course: ITT103
 Publuc URL to Code: https://github.com/Oat77/HospitalManagementSystem
 
-<Purpose>
+### Purpose
 The purpose of the program is to address the growing challenge where hospitals struggle to maintain adequate records as well as to properly track the status of doctors' apointments
 It was created with the aim of completly virtualizing the hospial system- offering capabilities such as doctor management, patient manual as well as appointment management on both the hospital and doctor's level. 
 
-<How to run>
+### How to run
 The code can be run by downlading the .py file in your repository. Once completed, this can be run in any Python IDE or launched from the terminal. 
 
-<Assumptions>
+### Assumptions
 To facilitate the smooth usage of this program, the following assumptions should be taken into account: 
   
 1) Each doctor's appointment does not exceed an hour.
@@ -18,7 +18,7 @@ To facilitate the smooth usage of this program, the following assumptions should
 3) A doctor is expected to be on call and available for every hour on any given day.
 4) Doctors' and patients' IDS are generated in a sequential manner.
 
-<Limitations?'
+### Limitations
 The followning limitations should be considered during the usage of this application: 
 
 1) No security control nor priviledged access managament has been implemented.
