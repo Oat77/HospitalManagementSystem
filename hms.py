@@ -19,7 +19,7 @@ class Patient (Person):
     @classmethod
     def generate_patient_id(cls):
         cls.patient_id_counter += 1
-        return "P" + cls.patient_id_counter
+        return "P" + str(cls.patient_id_counter)
 
     
     #Class initializer
@@ -45,7 +45,7 @@ class Doctor (Person):
     @classmethod
     def generate_doctor_id(cls):
         cls.doctor_id_counter += 1
-        return "D" + cls.doctor_id_counter
+        return "D" + str(cls.doctor_id_counter)
 
     #Class initializer
     def __init__(self, name, age, gender, appointments):
@@ -235,7 +235,7 @@ class HospitalSystem:
             print("Appointment not found. Try again.")
             return
 
-        print (f"######## Bill FOR APPOINTMENT: {app.appointment_id} ########")
+        print (f"\n######## Bill FOR APPOINTMENT: {app.appointment_id} ########")
         print (f"         Appointment Date: {app.month} {app.day}            ")
         print (f"         Assigned Doctor: {app.doctor.name}                 ")
         print (f"         Assigned Patient: {app.patient.name}               ")
