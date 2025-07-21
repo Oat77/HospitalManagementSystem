@@ -216,7 +216,7 @@ class HospitalSystem:
 
     #Completes appointment and prints bill.
     def complete_appointment(self):
-        consultation_charge= 300
+        consultation_charge= 3000
         comp_app= input("Enter appointment ID: ")
         found= False
         for app in self.appointments:
