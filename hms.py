@@ -110,7 +110,7 @@ class Doctor (Person):
 class Appointment:
 
     #references of appointment statuses
-    app_status = ['booked', 'pending', 'cancelled']
+    app_status = ['booked', 'completed', 'cancelled']
 
     #Class initializer
     def __init__ (self, appointment_id, patient, doctor, month, day, time, status):
@@ -126,7 +126,7 @@ class Appointment:
     def confirm(self):
         self.status = self.app_status[0]
 
-    def confirm(self):
+    def complete(self):
         self.status= self.app_status[1]
 
     def cancel(self):
@@ -195,7 +195,7 @@ class HospitalSystem:
             if book_time in slots:
                 idx = slots.index(book_time)
                 slots[idx] = "BOOKED"
-                appointment = Appointment(book_appID, patient, doctor, book_month, book_day, book_time)
+                appointment = Appointment(book_appID, patient, doctor, book_month, book_day, book_time, 'booked')
                 appointment.confirm()
                 self.appointments.append(appointment)
                 doctor.appointments.append(appointment)
@@ -204,9 +204,44 @@ class HospitalSystem:
                 print("Time slot is not available.")
 
         #Throws error exception for invalid appointment details. 
-        except Exception as error:
+        except Exception as error: 
             print("Error in processing appointment:", error)
             print("Check submitted details and try again.")
+
+    #Completes appointment and prints bill.
+    def complete_appointment(self):
+        consultation_charge= 300
+        comp_app= input("Enter appointment ID: ")
+        found= False
+        for app in self.appointments:
+            if app.appointment_id == comp_app:
+                found= True
+                extra= "N/A"
+                service= "N/A"
+                app.complete() 
+                extra= input ("Were there any other service offered during this consultation? (Y/N): ").strip().upper()
+                if extra == "Y":
+                    service= input("Enter service offered: ")
+                    cost= input("Enter service cost: ")
+                    try:
+                        total_cost= int(cost) + consultation_charge
+                    except ValueError:
+                        print ("Bill generation error due to invalid entry. Pease try again.")
+                        return
+                else: 
+                    total_cost= consultation_charge
+                break
+        if not found:
+            print("Appointment not found. Try again.")
+            return
+
+        print (f"######## Bill FOR APPOINTMENT: {app.appointment_id} ########")
+        print (f"         Appointment Date: {app.month} {app.day}            ")
+        print (f"         Assigned Doctor: {app.doctor.name}                 ")
+        print (f"         Assigned Patient: {app.patient.name}               ")
+        print (f"         Additional Services: {service}                    ")
+        print (f"         Total Cost: {total_cost}                           ")
+                
 
     #Manages the cancellation of appointments and the updating of doctor's calendar. 
     def cancel_appointment(self):
@@ -321,22 +356,27 @@ if __name__ == "__main__":
             while True:
                 print("\n ######## Appointment Manager ########")
                 print("1. Book Appointment")
-                print("2. Cancel Appointment")
-                print("3. Check Available Bookings")
-                print("4. View Patient Appointments")
-                print("5. Exit")
+                print("2. Complete Appointment")
+                print("3. Cancel Appointment")
+                print("4. Check Available Bookings")
+                print("5. View Patient Appointments")
+                print("6. Exit")
                 ap_choice = input("\n Your choice: ")
 
                 #Books appointment
                 if ap_choice == str(1):
                     hms.book_appointment()
+                    
+                #Completes appointment
+                elif ap_choice == str(2):
+                    hms.complete_appointment()
 
                 #Cancels appointment
-                elif ap_choice == str(2):
+                elif ap_choice == str(3):
                     hms.cancel_appointment()
 
                 #Displays available dates for a given doctor
-                elif ap_choice == str(3):
+                elif ap_choice == str(4):
                     doc_id = input("Enter doctor ID: ").strip()
                     doctor = next((d for d in hms.doctors if str(d.doctor_id) == doc_id), None)
                     if doctor:
@@ -345,7 +385,7 @@ if __name__ == "__main__":
                         print("Doctor ID not found.")
 
                 #Generates listing of all appointments for a given patient
-                elif ap_choice == str(4):
+                elif ap_choice == str(5):
                     pat_id = input("Enter patient ID: ").strip()
                     found = False
                     for appt in hms.appointments:
@@ -354,7 +394,8 @@ if __name__ == "__main__":
                             found = True
                     if not found:
                         print("No appointments found for this patient.")
-                elif ap_choice == str(5):
+
+                elif ap_choice == str(6):
                     print("Exiting Appointment Manager.")
                     break
 
