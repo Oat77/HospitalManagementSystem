@@ -19,7 +19,7 @@ It was created with the aim of completly virtualizing the hospial system- offeri
 
 ### How to run
 1. Clone the repository or download the script. 
-2. Run the script python hospital_system.py
+2. Run the python script: hospital_system.py
 
 ### Assumptions
 To facilitate the smooth usage of this program, the following assumptions should be taken into account: 
